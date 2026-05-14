@@ -318,6 +318,9 @@ Vostokoff alerts Dreykov and his agents arrive to take them, but Romanoff convin
 At the Red Room, Vostokoff frees Shostakov and Belova from their restraints. Dreykov sees through Romanoff's disguise and reveals that Taskmaster is Antonia, who suffered damage severe enough that Dreykov had to put technology in her head to save her, in turn creating the perfect soldier, capable of mimicking the actions & fighting styles of anyone she sees. Romanoff is unable to attack Dreykov due to a pheromone lock installed in every Widow but negates that by breaking her own nose and severing a nerve in her nasal passage. Shostakov battles Taskmaster while Vostokoff takes out one of the facility's engines. They then lock Taskmaster in a cell.
 Dreykov escapes as other Black Widows attack Romanoff, but Belova exposes them to the antidote. Romanoff copies the locations of other Widows worldwide from Dreykov's computer as the facility begins to explode and fall. She retrieves two surviving antidote vials and frees Taskmaster from the locked cell.
 Vostokoff and Shostakov escape via a plane (which loses control after they lose their vertical stabilizer and hence, they can't get back to the red room to rescue the girls) while Belova takes out Dreykov's aircraft (by destroying its engine with a pole, by the explosion throws her off the exploding deck of the Red room), killing him. Romanoff, who was watching this, jumps after her. In free-fall, Romanoff gives Belova a parachute before battling Taskmaster. After landing, Romanoff uses one antidote vial on Taskmaster and gives the other to Belova along with the locations of the other mind-controlled Widows so she can find and free them. Belova, Vostokoff, and Shostakov say goodbye to Romanoff and leave with Antonia and the freed Widows. Two weeks later, Mason supplies Romanoff with a Quinjet to use in freeing the imprisoned Avengers.`},
+      { char_name: "Harry Potter",
+        story_name: "Harry Potter and the Philosopher's Stone",
+        plot: `Harry Potter is an orphan living a miserable life with his cruel aunt and uncle, the Dursleys. On his eleventh birthday, Hagrid reveals that Harry is a wizard whose parents were murdered by Voldemort. Harry attends Hogwarts, befriends Ron Weasley and Hermione Granger, and discovers a mysterious object guarded on the third floor.`},
       { char_name: "", story_name: "", plot: ""}
   ];
   // document.getElementById('mainCharacter').value = heroes[4].char_name;
@@ -351,30 +354,40 @@ Vostokoff and Shostakov escape via a plane (which loses control after they lose 
     });
   });
 
+function normalizeTitle(s) {
+  // Match folder-name semantics: lowercase, normalize curly→straight quotes, collapse whitespace.
+  return s.toLowerCase()
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function generateStory() {
   const mainCharacter = document.getElementById('mainCharacter').value.trim();
   const storyTitle = document.getElementById('storyTitle').value.trim();
   const originalPlot = document.getElementById('originalPlot').value.trim();
-  console.log(storyTitle)
-  
+  console.log('typed title:', JSON.stringify(storyTitle));
+
   if (!mainCharacter || !storyTitle) {
     alert('Please fill in all fields before generating your "What if...?" story');
     return;
   }
-  if (!heroes.some(hero => hero.story_name === storyTitle)) {
+  const matched = heroes.find(hero => normalizeTitle(hero.story_name) === normalizeTitle(storyTitle));
+  if (!matched) {
     alert("Please choose a pre-generated stories by clicking one of the hero icons on the top.\nWe will support on-site generation soon.");
     return;
   }
   generateButton = document.querySelector('.button-6')
   generateButton.textContent = 'Generating...';
   generateButton.disabled = true;
-  
-  // Store the values in sessionStorage
+
+  // Store the values in sessionStorage — use the canonical title from heroes so the folder lookup works.
   setTimeout(() => {
-    sessionStorage.setItem('mainCharacter', heroes.find(hero => hero.story_name === storyTitle).char_name);
-    sessionStorage.setItem('storyTitle', storyTitle);
+    sessionStorage.setItem('mainCharacter', matched.char_name);
+    sessionStorage.setItem('storyTitle', matched.story_name);
     sessionStorage.setItem('originalPlot', originalPlot);
-    
+
     // Redirect to another page
     window.location.href = 'game.html';
   }, 3000);
